@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { API_URL } from "./api";
+
 
 const AllocationForm = () => {
     const [investors, setInvestors] = useState([{ investor_id: "1", requested_amount: "", average_investment: "" }]);
@@ -17,14 +19,15 @@ const AllocationForm = () => {
     };
 
     const submitAllocation = async () => {
-        const payload = investors.map(inv => ({
-            investor_id: inv.investor_id,
-            requested_amount: parseFloat(inv.requested_amount),
-            average_investment: parseFloat(inv.average_investment)
-        }));
-
         try {
-            const response = await axios.post("http://localhost:8000/allocate", { investors: payload, total_allocation: totalAllocation });
+            const response = await axios.post(`${API_URL}/allocate`, {
+                investors: investors.map(inv => ({
+                    investor_id: inv.investor_id,
+                    requested_amount: parseFloat(inv.requested_amount),
+                    average_investment: parseFloat(inv.average_investment)
+                })),
+                total_allocation: totalAllocation
+            });
             setResults(response.data);
         } catch (error) {
             console.error("Error allocating funds", error);
